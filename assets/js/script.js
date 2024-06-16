@@ -74,7 +74,7 @@ function createTaskCard(task) {
     // Setting up background change like it is in the mini project, while changing the variables and handles to better align this challenge
     if (task.taskDate && task.status !== 'done') {
         const now = dayjs();
-        const taskDueDate = dayjs(task.dueDate, 'DD/MM/YYYY');
+        const taskDueDate = dayjs(task.taskDate, 'DD/MM/YYYY');
 
         if (now.isSame(taskDueDate, 'day')) {
             taskCard.addClass('bg-warning text-white');
