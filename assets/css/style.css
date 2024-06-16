@@ -3,6 +3,10 @@ body {
   font-size: 16px;
 }
 
+.form-top-row {
+  display: flex;
+}
+
 .swim-lanes {
   min-height: 60vh;
 }
