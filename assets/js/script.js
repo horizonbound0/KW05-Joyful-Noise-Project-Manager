@@ -14,6 +14,23 @@ function generateTaskId() {
     return taskID;
 }
 
+// TODO: MAKE FUNCTION TO STORE FORM VALUES IN LOCAL STORAGE
+function storeTasksLocal(taskArray) {
+    localStorage.setItem('tasks', JSON.stringify(taskArray));
+}
+
+// TODO: MAKE FUNCTION TO READ TASKS FROM LOCAL STORAGE
+function readTasksLocal() {
+    const tasks = [];
+
+    if (localStorage.getItem('tasks') != null) {
+        tasks = JSON.parse(localStorage.getItem('tasks'));
+        return tasks;
+    } else {
+        return tasks;
+    }
+}
+
 // TODO: create a function to create a task card
 function createTaskCard(task) {
 
@@ -24,13 +41,13 @@ function createTaskCard(task) {
     //--------------------
 
     // TODO: Create a new card header element and add the classes `card-header` and `h4`. Also set the text of the card header to the project name.
-    const taskTitleEl = $('<h4>')
+    const taskTitle = $('<h4>')
         .addClass('card-header h4')
         .text(task.title);
     //--------------------
 
     // TODO: Create a new card body element and add the class `card-body`.
-    const cardBodyEl = $('<div>')
+    const cardBody = $('<div>')
         .addClass('card-body');
     //--------------------
 
@@ -68,12 +85,14 @@ function createTaskCard(task) {
     }
 
     // TODO: Append the card description, card due date, and card delete button to the card body.
-    cardBodyEl.append([newPEL, newPEL2, cardDeleteBtn]);
+    cardBodyEl.append([taskDesc, taskDueDate, cardDeleteBtn]);
     //--------------------
 
     // TODO: Append the card header and card body to the card.
-    taskCard.append([newHeaderEl, newCardBodyEl]);
+    taskCard.append([taskTitle, cardBody]);
     //--------------------
+
+    return taskCard;
 }
 
 // TODO: create a function to render the task list and make cards draggable
@@ -84,34 +103,46 @@ function renderTaskList() {
 // TODO: create a function to handle adding a new task
 function handleAddTask(event) {
     event.preventDefault();
+    const target = event.target;
+    const targetAdd = target.dataset.task;
+    if (targetAdd === 'add') {
+        // TODO: GRAB INPUT ELEMENT VALUES <<<<<<<<<<<<<<
+        const taskTitle = taskTitleEl.val();
+        const taskDesc = taskDescEl.val();
+        const taskDate = taskDueDateEl.val();
 
-    // TODO: UPDATE THIS WITH THE PROPER ELEMENT HANDLES <<<<<<<<<<<<<<
-    const taskTitle = taskTitleEl.val();
-    const taskDesc = taskDescEl.val();
-    const taskDate = taskDueDateEl.val();
-    //--------------------
+        if (taskTitle != null && taskDesc != null && taskDate != null) {
+            // BUILD THE TASK OBJECT
+            const newTask = {
+                id: generateTaskId(),
+                title: taskTitle,
+                desc: taskDesc,
+                taskDate: taskDate,
+                status: 'to-do',
+            };
 
-    // BUILD THE TASK OBJECT
-    const newTask = {
-        id: generateTaskId(),
-        title: taskTitle,
-        desc: taskDesc,
-        taskDate: taskDate,
-        status: 'to-do',
-    };
+            // PULL TASKS OR ARRAY FROM STORAGE
+            const tasks = readTasksLocal();
 
-    // TODO: FUNCTION TO READ TASKS FROM STORAGE <<<<<<<<<<<<<<<<<<<<<<<
-    const tasks = readTasksFromStorage();
-    tasks.push(newTask);
+            // PUSH NEW TASK INTO ARRAY
+            tasks.push(newTask);
 
-    // TODO: FUNCTION TO SAVE UPDATED TASKS TO LOCAL STORAGE <<<<<<<<<<<<<<<<
-    saveTasksToStorage(projects);
+            // OVERWRITE WHATEVER IS IN STORAGE UNDER 'TASKS'
+            storeTasksLocal(tasks);
 
-    // TODO: PUTS THE TASK ON THE SCREEN <<<<<<<<<<<<<<<<<<<<<<<<
-    renderTaskList();
+            // TODO: PUTS THE TASK ON THE SCREEN <<<<<<<<<<<<<<<<<<<<<<<<
+            //renderTaskList();
 
-    // TODO: PUT THE CORRECT ARRAY NAME IN THIS RESET METHOD <<<<<<<<<<<<<<<<
-    modalFormEl[0].reset()
+            console.log(`Task ID: ${generateTaskId()}
+            Task Title: ${taskTitleEl.val()}
+            Task Due Date: ${taskDueDateEl.val()}
+            Task Desc: ${taskDescEl.val()}`);
+
+            // RESET THE FORM
+            modalFormEl[0].reset()
+        }
+    }
+
 }
 
 // TODO: create a function to handle deleting a task
@@ -121,32 +152,46 @@ function handleDeleteTask(event) {
 
 // TODO: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
-
-}
-
-//// testing modal form /////
-const modalConsole = (event) => {
-    event.preventDefault;
-    const target = event.target;
-    const targetAdd = target.dataset.task;
-    if (targetAdd === 'add') {
-        console.log(`Task ID: ${generateTaskId()}
-            Task Title: ${taskTitleEl.val()}
-            Task Due Date: ${taskDueDateEl.val()}
-            Task Desc: ${taskDescEl.val()}`);
-        modalFormEl[0].reset()
+    // ? Read projects from localStorage
+    const tasks = readTasksLocal();
+  
+    // ? Get the project id from the event
+    const taskID = ui.draggable[0].dataset.taskId;
+  
+    // ? Get the id of the lane that the card was dropped into
+    const newStatus = event.target.id;
+  
+    for (let task of tasks) {
+      // ? Find the project card by the `id` and update the project status.
+      if (task.id === taskID) {
+        task.status = newStatus;
+      }
     }
+    // ? Save the updated projects array to localStorage (overwritting the previous one) and render the new project data to the screen.
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    //renderTaskList();
+
 }
 
-modalFormEl.on('click', modalConsole);
+// event listener for form submission
+modalFormEl.on('click', handleAddTask);
 
 // TODO: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
+
+    // gotta render the tasks when the page loads!
+    //renderTaskList();
 
     // setting up the datepicker for the due date input
     $('#task-due-date').datepicker({
         changeMonth: true,
         changeYear: true,
+    });
+
+    // making the lanes droppable as they were in the mini-project
+    $('.lane').droppable({
+      accept: '.draggable',
+      drop: handleDrop,
     });
 
 });
