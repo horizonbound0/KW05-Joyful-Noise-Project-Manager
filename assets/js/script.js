@@ -74,7 +74,7 @@ function createTaskCard(task) {
     // Setting up background change like it is in the mini project, while changing the variables and handles to better align this challenge
     if (task.taskDate && task.status !== 'done') {
         const now = dayjs();
-        const taskDueDate = dayjs(task.dueDate, 'DD/MM/YYYY');
+        const taskDueDate = dayjs(task.taskDate, 'DD/MM/YYYY');
 
         if (now.isSame(taskDueDate, 'day')) {
             taskCard.addClass('bg-warning text-white');
@@ -85,7 +85,7 @@ function createTaskCard(task) {
     }
 
     // TODO: Append the card description, card due date, and card delete button to the card body.
-    cardBodyEl.append([taskDesc, taskDueDate, cardDeleteBtn]);
+    cardBody.append([taskDesc, taskDueDate, cardDeleteBtn]);
     //--------------------
 
     // TODO: Append the card header and card body to the card.
@@ -97,6 +97,50 @@ function createTaskCard(task) {
 
 // TODO: create a function to render the task list and make cards draggable
 function renderTaskList() {
+
+    const tasks = readTasksLocal();
+  
+    // ? Empty existing project cards out of the lanes
+    const todoList = $('#todo-cards');
+    todoList.empty();
+  
+    const inProgressList = $('#in-progress-cards');
+    inProgressList.empty();
+  
+    const doneList = $('#done-cards');
+    doneList.empty();
+  
+    // CREATE THE CARDS FROM THE TASKS ARRAY
+  
+    for (let i = 0; i < tasks.length; ++i) {
+      if (tasks[i].status === 'to-do') {
+        todoList.append(createTaskCard(tasks[i]));
+      } else if (tasks[i].status === 'in-progress') {
+        inProgressList.append(createTaskCard(tasks[i]));
+      } else if (tasks[i].status === 'done') {
+        doneList.append(createTaskCard(tasks[i]));
+      }
+    }
+    //--------------------
+  
+    // ? Use JQuery UI to make task cards draggable
+    $('.draggable').draggable({
+      opacity: 0.7,
+      zIndex: 100,
+      // ? This is the function that creates the clone of the card that is dragged. This is purely visual and does not affect the data.
+      helper: function (e) {
+        // ? Check if the target of the drag event is the card itself or a child element. If it is the card itself, clone it, otherwise find the parent card  that is draggable and clone that.
+        const original = $(e.target).hasClass('ui-draggable')
+          ? $(e.target)
+          : $(e.target).closest('.ui-draggable');
+        // ? Return the clone with the width set to the width of the original card. This is so the clone does not take up the entire width of the lane. This is to also fix a visual bug where the card shrinks as it's dragged to the right.
+        return original.clone().css({
+          width: original.outerWidth(),
+        });
+      },
+    });
+  
+    return tasks;
 
 }
 
@@ -131,7 +175,7 @@ function handleAddTask(event) {
             storeTasksLocal(tasks);
 
             // TODO: PUTS THE TASK ON THE SCREEN <<<<<<<<<<<<<<<<<<<<<<<<
-            //renderTaskList();
+            renderTaskList();
 
             console.log(`Task ID: ${generateTaskId()}
             Task Title: ${taskTitleEl.val()}
@@ -169,7 +213,7 @@ function handleDrop(event, ui) {
     }
     // ? Save the updated projects array to localStorage (overwritting the previous one) and render the new project data to the screen.
     localStorage.setItem('tasks', JSON.stringify(tasks));
-    //renderTaskList();
+    renderTaskList();
 
 }
 
@@ -180,7 +224,7 @@ modalFormEl.on('click', handleAddTask);
 $(document).ready(function () {
 
     // gotta render the tasks when the page loads!
-    //renderTaskList();
+    renderTaskList();
 
     // setting up the datepicker for the due date input
     $('#task-due-date').datepicker({
