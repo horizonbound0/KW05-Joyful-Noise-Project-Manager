@@ -21,7 +21,7 @@ function storeTasksLocal(taskArray) {
 
 // TODO: MAKE FUNCTION TO READ TASKS FROM LOCAL STORAGE
 function readTasksLocal() {
-    const tasks = [];
+    let tasks = [];
 
     if (localStorage.getItem('tasks') != null) {
         tasks = JSON.parse(localStorage.getItem('tasks'));
