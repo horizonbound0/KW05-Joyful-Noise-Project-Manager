@@ -15,12 +15,12 @@ function generateTaskId() {
     return taskID;
 }
 
-// TODO: MAKE FUNCTION TO STORE FORM VALUES IN LOCAL STORAGE
+// MAKE FUNCTION TO STORE FORM VALUES IN LOCAL STORAGE
 function storeTasksLocal(taskArray) {
     localStorage.setItem('tasks', JSON.stringify(taskArray));
 }
 
-// TODO: MAKE FUNCTION TO READ TASKS FROM LOCAL STORAGE
+// MAKE FUNCTION TO READ TASKS FROM LOCAL STORAGE
 function readTasksLocal() {
     let tasks = [];
 
