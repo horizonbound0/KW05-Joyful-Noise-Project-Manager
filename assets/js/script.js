@@ -6,6 +6,7 @@ const modalFormEl = $('#modal-form');
 const taskTitleEl = $('#task-title-input');
 const taskDueDateEl = $('#task-due-date');
 const taskDescEl = $('#task-desc');
+const taskDisplayEl = $('#task-display');
 
 
 // TODO: create a function to generate a unique task id
@@ -191,6 +192,26 @@ function handleAddTask(event) {
 
 // TODO: create a function to handle deleting a task
 function handleDeleteTask(event) {
+    // using HTML to verify the project ID
+    const targetEl = event.target;
+    const targetId = targetEl.dataset.taskId;
+    
+    const tasks = readTasksLocal();  
+  
+    // TODO: Loop through the projects array and remove the project with the matching id.
+    for (let i = 0; i < tasks.length; ++i) {
+  
+      if (tasks[i].id === targetId) {
+        console.log('delete button clicked at: ' + tasks[i].title);
+        tasks.splice(i, 1);
+      }
+    }
+  
+    // ? We will use our helper function to save the projects to localStorage
+    storeTasksLocal(tasks);
+  
+    // ? Here we use our other function to print projects back to the screen
+    renderTaskList();
 
 }
 
@@ -219,6 +240,9 @@ function handleDrop(event, ui) {
 
 // event listener for form submission
 modalFormEl.on('click', handleAddTask);
+
+// event listener for delete buttons
+taskDisplayEl.on('click', handleDeleteTask);
 
 // TODO: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
 $(document).ready(function () {
