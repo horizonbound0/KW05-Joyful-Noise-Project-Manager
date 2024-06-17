@@ -35,42 +35,31 @@ function readTasksLocal() {
 // TODO: create a function to create a task card
 function createTaskCard(task) {
 
-    // making the task card to hold the info and be draggable
+    // making the task card and it's contents to hold the info and be draggable
     const taskCard = $('<div>')
         .addClass('card task-card draggable my-3')
         .attr('data-task-id', task.id);
-    //--------------------
-
-    // TODO: Create a new card header element and add the classes `card-header` and `h4`. Also set the text of the card header to the project name.
+    
     const taskTitle = $('<h4>')
         .addClass('card-header h4')
         .text(task.title);
-    //--------------------
-
-    // TODO: Create a new card body element and add the class `card-body`.
+    
     const cardBody = $('<div>')
         .addClass('card-body');
-    //--------------------
-
-    // TODO: Create a new paragraph element and add the class `card-text`. Also set the text of the paragraph to the project type.
+    
     const taskDesc = $('<p>')
         .addClass('card-text')
         .text(task.desc);
-    //--------------------
-
-    // TODO: Create a new paragraph element and add the class `card-text`. Also set the text of the paragraph to the project due date.
+    
     const taskDueDate = $('<p>')
         .addClass('card-text')
         .text(task.taskDate);
-    //--------------------
-
-
-    // TODO: Create a new button element and add the classes `btn`, `btn-danger`, and `delete`. Also set the text of the button to "Delete" and add a `data-project-id` attribute and set it to the project id.
+    
     const cardDeleteBtn = $('<button>')
         .addClass('btn btn-danger delete')
         .attr('data-task-id', task.id)
         .text('Delete');
-    //--------------------
+    
 
     // Setting up background change like it is in the mini project, while changing the variables and handles to better align this challenge
     if (task.taskDate && task.status !== 'done') {
@@ -85,11 +74,11 @@ function createTaskCard(task) {
         }
     }
 
-    // TODO: Append the card description, card due date, and card delete button to the card body.
+    // put the description, due date, and delete button in the body
     cardBody.append([taskDesc, taskDueDate, cardDeleteBtn]);
     //--------------------
 
-    // TODO: Append the card header and card body to the card.
+    // put the body and title in the card element
     taskCard.append([taskTitle, cardBody]);
     //--------------------
 
@@ -101,7 +90,7 @@ function renderTaskList() {
 
     const tasks = readTasksLocal();
   
-    // ? Empty existing project cards out of the lanes
+    // clear the lanes each time this function is called
     const todoList = $('#todo-cards');
     todoList.empty();
   
@@ -122,27 +111,24 @@ function renderTaskList() {
         doneList.append(createTaskCard(tasks[i]));
       }
     }
-    //--------------------
   
-    // ? Use JQuery UI to make task cards draggable
+    // make the cards dragable
     $('.draggable').draggable({
       opacity: 0.7,
       zIndex: 100,
-      // ? This is the function that creates the clone of the card that is dragged. This is purely visual and does not affect the data.
+      // add some visual effects for the user like in the mini project
       helper: function (e) {
-        // ? Check if the target of the drag event is the card itself or a child element. If it is the card itself, clone it, otherwise find the parent card  that is draggable and clone that.
+        // checks what the user is dragging, and makes sure to bring the whole card with it
         const original = $(e.target).hasClass('ui-draggable')
           ? $(e.target)
           : $(e.target).closest('.ui-draggable');
-        // ? Return the clone with the width set to the width of the original card. This is so the clone does not take up the entire width of the lane. This is to also fix a visual bug where the card shrinks as it's dragged to the right.
+        // as noted in the mini project, this is to make sure the card width doesn't get funky during the drag
         return original.clone().css({
           width: original.outerWidth(),
         });
       },
-    });
-  
+    });  
     return tasks;
-
 }
 
 // TODO: create a function to handle adding a new task
@@ -151,7 +137,7 @@ function handleAddTask(event) {
     const target = event.target;
     const targetAdd = target.dataset.task;
     if (targetAdd === 'add') {
-        // TODO: GRAB INPUT ELEMENT VALUES <<<<<<<<<<<<<<
+        // GRAB INPUT ELEMENT VALUES <<<<<<<<<<<<<<
         const taskTitle = taskTitleEl.val();
         const taskDesc = taskDescEl.val();
         const taskDate = taskDueDateEl.val();
@@ -175,7 +161,7 @@ function handleAddTask(event) {
             // OVERWRITE WHATEVER IS IN STORAGE UNDER 'TASKS'
             storeTasksLocal(tasks);
 
-            // TODO: PUTS THE TASK ON THE SCREEN <<<<<<<<<<<<<<<<<<<<<<<<
+            // PUTS THE TASK ON THE SCREEN <<<<<<<<<<<<<<<<<<<<<<<<
             renderTaskList();
 
             console.log(`Task ID: ${generateTaskId()}
@@ -187,7 +173,6 @@ function handleAddTask(event) {
             modalFormEl[0].reset()
         }
     }
-
 }
 
 // TODO: create a function to handle deleting a task
@@ -198,7 +183,7 @@ function handleDeleteTask(event) {
     
     const tasks = readTasksLocal();  
   
-    // TODO: Loop through the projects array and remove the project with the matching id.
+    // make sure the id matches then remove from tasks array
     for (let i = 0; i < tasks.length; ++i) {
   
       if (tasks[i].id === targetId) {
@@ -207,35 +192,34 @@ function handleDeleteTask(event) {
       }
     }
   
-    // ? We will use our helper function to save the projects to localStorage
+    // update local storage
     storeTasksLocal(tasks);
   
-    // ? Here we use our other function to print projects back to the screen
+    // print the cards on the screen
     renderTaskList();
-
 }
 
 // TODO: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
-    // ? Read projects from localStorage
+    // get the projects from local storage
     const tasks = readTasksLocal();
   
-    // ? Get the project id from the event
+    // need the task id
     const taskID = ui.draggable[0].dataset.taskId;
   
-    // ? Get the id of the lane that the card was dropped into
+    // grab what lane the task is now in
     const newStatus = event.target.id;
   
     for (let task of tasks) {
-      // ? Find the project card by the `id` and update the project status.
+      // cycle through the tasks ^^^ and change status accordingly vvv
       if (task.id === taskID) {
         task.status = newStatus;
       }
     }
-    // ? Save the updated projects array to localStorage (overwritting the previous one) and render the new project data to the screen.
+    
+    // save over what's in local storage and put the cards on the page.
     localStorage.setItem('tasks', JSON.stringify(tasks));
     renderTaskList();
-
 }
 
 // event listener for form submission
@@ -261,5 +245,4 @@ $(document).ready(function () {
       accept: '.draggable',
       drop: handleDrop,
     });
-
 });
