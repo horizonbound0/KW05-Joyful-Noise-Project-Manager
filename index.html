@@ -26,49 +26,7 @@
 
 
   <!-- Modal -->
-  <div class="modal fade" id="task-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <form id="modal-form" class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add task</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item form-top-row justify-content-between">
-              <input
-                id="task-title-input"
-                type="text"
-                class="form-control"
-                placeholder="Task Title"
-                aria-label="Task Title"
-              />
-              <input 
-              id="task-due-date" 
-              autocomplete="off"
-              type="text"
-              class="form-control" 
-              placeholder="Due Date" 
-              aria-label="Due Date" 
-              />
-            </li>
-            <li class="list-group-item">
-              <textarea 
-              placeholder="Task Description"
-              autocomplete="off"
-              class="form-control"
-              name="task-desc" 
-              id="task-desc"></textarea>
-            </li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-task="add">Save task</button>
-        </div>
-      </form>
-    </div>
-  </div>
+  
 
   <header class="p-4 mb-4 text-center border-bottom border-5">
 
@@ -87,7 +45,51 @@
     </div>
 
     <!-- TODO: Create a modal with a form to add tasks -->
-    <div class="row swim-lanes text-center justify-content-between">
+    <div class="modal fade" id="task-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form id="modal-form" class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add task</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item form-top-row justify-content-between">
+                <input
+                  id="task-title-input"
+                  type="text"
+                  class="form-control"
+                  placeholder="Task Title"
+                  aria-label="Task Title"
+                />
+                <input 
+                id="task-due-date" 
+                autocomplete="off"
+                type="text"
+                class="form-control" 
+                placeholder="Due Date" 
+                aria-label="Due Date" 
+                />
+              </li>
+              <li class="list-group-item">
+                <textarea 
+                placeholder="Task Description"
+                autocomplete="off"
+                class="form-control"
+                name="task-desc" 
+                id="task-desc"></textarea>
+              </li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-task="add">Save task</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="task-display" class="row swim-lanes text-center justify-content-between">
 
       <div class="col-12 col-lg-4 d-flex">
 
